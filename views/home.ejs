@@ -12,6 +12,34 @@
       <input type="file" name="file_upload" id="file_upload" />
       <button type="submit">Upload</button>
     </form>
+    <form action="/create-folder" method="POST">
+      <label for="create_folder">Create Folder:</label>
+      <input type="text" name="create_folder" id="create_folder" required />
+      <button type="submit">Create Folder</button>
+    </form>
+    <form action="/delete-folder" method="POST">
+      <label for="create_folder">Delete Folder:</label>
+      <input type="text" name="create_folder" id="create_folder" required />
+      <button type="submit">Delete Folder</button>
+    </form>
+    <form action="/rename-folder" method="POST">
+      <label for="old_name">Old Name:</label>
+      <input type="text" name="old_name" id="old_name" required />
+      <label for="new_name">New Name:</label>
+      <input type="text" name="new_name" id="new_name" required />
+      <button type="submit">Rename Folder</button>
+    </form>
     <a href="/sign-out"><button>Sign Out</button></a>
+    <% if (typeof contents !== 'undefined') {%>
+    <ul>
+      <% contents.forEach((content) => { %>
+      <li>
+        <a href="<%= `${user.id}/${content}` %>"><%= content %></a>
+      </li>
+      <% }) %>
+    </ul>
+    <% } else { %>
+    <p>No files yet</p>
+    <% } %>
   </body>
 </html>

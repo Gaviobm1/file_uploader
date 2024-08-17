@@ -1,10 +1,15 @@
-const User = require("../db/queries");
+const User = require("../db/userQueries");
+const Folder = require("../db/folderQueries");
 const bcrypt = require("bcryptjs");
+const fs = require("fs");
+const path = require("path");
 const asyncHandler = require("express-async-handler");
 const passport = require("passport");
 const { body, validationResult } = require("express-validator");
+const folderController = require("./folderController");
 
 const db = new User();
+const folderDb = new Folder();
 
 const validateUser = [
   body("first_name").trim().isLength({ max: 30, min: 1 }).escape(),
@@ -63,8 +68,8 @@ exports.createUser = [
           errors: errors.array(),
         });
       }
-      console.log(user);
-      await db.addUser(user);
+      const newUser = await db.addUser(user);
+      await folderController.createRootFolder(newUser);
       res.render("home", { user });
     });
   }),
@@ -75,8 +80,7 @@ exports.signin = [
     failureRedirect: "/",
   }),
   (req, res) => {
-    console.log(req.session);
-    res.render("home", { user: req.user });
+    res.redirect(`users/${req.user.id}`);
   },
 ];
 
@@ -86,5 +90,16 @@ exports.signout = asyncHandler((req, res, next) => {
       return next(err);
     }
     res.redirect("/");
+  });
+});
+
+exports.homepage = asyncHandler(async (req, res, next) => {
+  const path = `${folderController.rootFolder}/${req.user.id}`;
+  fs.readdir(path, (err, contents) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.render("home", { user: req.user, contents });
+    }
   });
 });

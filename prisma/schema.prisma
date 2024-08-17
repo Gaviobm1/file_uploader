@@ -13,7 +13,26 @@ model User {
   lastName  String
   email String  @unique
   password  String
+  folders Folder[]
+  files File[]
 }
+
+model Folder {
+  id  Int @id @default(autoincrement())
+  owner User  @relation(fields: [ownerId], references: [id])
+  ownerId Int
+  path  String  @unique
+  files File[]
+}
+
+model File {
+  id  Int @id @default(autoincrement())
+  owner User  @relation(fields: [ownerId], references: [id])
+  ownerId Int
+  folder  Folder  @relation(fields: [folderPath], references: [path])
+  folderPath  String
+}
+
 
 model Session {
   id        String   @id

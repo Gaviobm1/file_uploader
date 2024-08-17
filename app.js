@@ -5,7 +5,7 @@ const localStrategy = require("./helpers/passportStrategy");
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 const { PrismaClient } = require("@prisma/client");
 const prismaSession = require("./db/sessionStore");
-const User = require("./db/queries");
+const User = require("./db/userQueries");
 const path = require("path");
 require("dotenv").config();
 
@@ -27,6 +27,7 @@ app.use(
     }),
     secret: process.env.SECRET_KEY,
     resave: false,
+    saveUninitialized: true,
     cookie: { maxAge: 60 * 60 * 1000 },
   })
 );
